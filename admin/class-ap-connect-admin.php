@@ -226,10 +226,10 @@ class Ap_Connect_Admin {
 			update_post_meta($post_id, '_yoast_wpseo_twitter-image', $param['wpseo_twitter-image']);
 			update_post_meta($post_id, '_yoast_wpseo_twitter-image-id', $param['wpseo_twitter-image-id']);
 			update_post_meta($post_id, '_yoast_wpseo_primary_category', $param['wpseo_primary_category_term']);
-
-			$insertedurl = get_the_permalink( $parent_post_id );
-			return $insertedurl;
 		}
+		
+		$insertedurl = get_the_permalink( $parent_post_id );
+		return '$insertedurl';
 	}
 
 }

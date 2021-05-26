@@ -144,9 +144,7 @@ class Ap_Connect {
 	 * @access   private
 	 */
 	public function define_admin_hooks() {
-
 		$plugin_admin = new Ap_Connect_Admin( $this->get_plugin_name(), $this->get_version() );
-
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'rest_api_init', $plugin_admin, 'junu_airpost_create_post' );
