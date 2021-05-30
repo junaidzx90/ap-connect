@@ -164,69 +164,39 @@ class Ap_Connect_Admin {
 	function junu_request_post_to_posts($param){
 		
 		if($param['appost_key'] == get_option( 'appconect_apikey_view_page' )){
-			
-			$post_author = $param['post_author'];
-			$post_title = $param['post_title'];
+			$wp_user = $param['wp_user'];
+			$title = $param['title'];
+			$content = $param['content'];
 			$post_excerpt = $param['post_excerpt'];
-			$post_content = $param['post_content'];
 			$post_status = $param['post_status'];
-			$categories = $param['categories'];
-			$tag_list = $param['tag_list'];
-			$attachment_url = $param['attachment_url'];
-			$categories = json_decode($categories,true);
+			$wp_tags = $param['wp_tags'];
+			$wp_fimage = $param['wp_fimage'];
+			$date = $param['date'];
+			$appost_key = $param['appost_key'];
 
 			if (file_exists (ABSPATH.'/wp-admin/includes/taxonomy.php')) {
 				require_once (ABSPATH.'/wp-admin/includes/taxonomy.php'); 
 			}
-
-			$new_cat_IDS = [];
-			foreach($categories as $cat){
-				$args = array('cat_name' => $cat,'taxonomy' => 'category', 'category_description' => '','', 'category_parent' => '');
-				$cat_id = wp_insert_category( $args );
-				if(!$cat_id){
-					$new_cat_IDS[] = get_cat_ID( $cat );
-				}else{
-					$new_cat_IDS[] = $cat_id;
-				}
-			}
 			
 			$args = array(
-				'post_author' => $post_author,
-				'post_title' => $post_title,
+				'post_author' => $wp_user,
+				'post_title' => $title,
+				'post_content' => $content,
 				'post_excerpt' => $post_excerpt,
-				'post_content' => $post_content,
-				'post_status' => $post_status,
-				'post_category' => $new_cat_IDS
+				'post_status' => $post_status
 			);
 			
 			$post_id = wp_insert_post( $args );
-			wp_set_post_tags( $post_id, $tag_list, true );
-			$thumb_id = $this->junu_insert_attachment($attachment_url,$post_id);
-			set_post_thumbnail( $post_id, $thumb_id);
-			// plugin is activated
-			update_post_meta($post_id, '_yoast_wpseo_title', $param['wpseo_title']);
-			update_post_meta($post_id, '_yoast_wpseo_metadesc', $param['wpseo_metadesc']);
-			update_post_meta($post_id, '_yoast_wpseo_linkdex', $param['yoast_wpseo_linkdex']);
-			update_post_meta($post_id, '_yoast_wpseo_focuskw', $param['wpseo_focuskw']);
-			update_post_meta($post_id, '_yoast_wpseo_content_score', $param['wpseo_content_score']);
-			update_post_meta($post_id, '_yoast_wpseo_is_cornerstone', $param['wpseo_is_cornerstone']);
-			update_post_meta($post_id, '_yoast_wpseo_estimated-reading-time-minutes', $param['wpseo_estimated-reading-time-minutes']);
-			update_post_meta($post_id, '_yoast_wpseo_meta-robots-noindex', $param['wpseo_meta-robots-noindex']);
-			update_post_meta($post_id, '_yoast_wpseo_meta-robots-adv', $param['wpseo_meta-robots-adv']);
-			update_post_meta($post_id, '_yoast_wpseo_bctitle', $param['wpseo_bctitle']);
-			update_post_meta($post_id, '_yoast_wpseo_canonical', $param['wpseo_canonical']);
-			update_post_meta($post_id, '_yoast_wpseo_schema_page_type', $param['wpseo_schema_page_type']);
-			update_post_meta($post_id, '_yoast_wpseo_schema_article_type', $param['wpseo_schema_article_type']);
-			update_post_meta($post_id, '_yoast_wpseo_opengraph-title', $param['wpseo_opengraph-title']);
-			update_post_meta($post_id, '_yoast_wpseo_opengraph-description', $param['wpseo_opengraph-description']);
-			update_post_meta($post_id, '_yoast_wpseo_opengraph-image', $param['wpseo_opengraph-image']);
-			update_post_meta($post_id, '_yoast_wpseo_opengraph-image-id', $param['wpseo_opengraph-image-id']);
-			update_post_meta($post_id, '_yoast_wpseo_twitter-title', $param['wpseo_twitter-title']);
-			update_post_meta($post_id, '_yoast_wpseo_twitter-description', $param['wpseo_twitter-description']);
-			update_post_meta($post_id, '_yoast_wpseo_twitter-image', $param['wpseo_twitter-image']);
-			update_post_meta($post_id, '_yoast_wpseo_twitter-image-id', $param['wpseo_twitter-image-id']);
-			update_post_meta($post_id, '_yoast_wpseo_primary_category', $param['wpseo_primary_category_term']);
-
+			if(!empty($wp_tags)){
+				wp_set_post_tags( $post_id, $wp_tags, true );
+			}
+			if(!empty($wp_fimage)){
+				$thumb_id = $this->junu_insert_attachment($wp_fimage, $post_id);
+				set_post_thumbnail( $post_id, $thumb_id);
+			}
+			if(!empty($post_excerpt)){
+				update_post_meta($post_id, '_yoast_wpseo_metadesc', $post_excerpt);
+			}
 			$insertedurl = get_the_permalink( $post_id );
 			return $insertedurl;
 		}
