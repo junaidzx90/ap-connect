@@ -171,7 +171,6 @@ class Ap_Connect_Admin {
 			$post_status = $param['post_status'];
 			$wp_tags = $param['wp_tags'];
 			$wp_fimage = $param['wp_fimage'];
-			$date = $param['date'];
 			$appost_key = $param['appost_key'];
 
 			if (file_exists (ABSPATH.'/wp-admin/includes/taxonomy.php')) {
@@ -197,8 +196,12 @@ class Ap_Connect_Admin {
 			if(!empty($post_excerpt)){
 				update_post_meta($post_id, '_yoast_wpseo_metadesc', $post_excerpt);
 			}
-			$insertedurl = get_the_permalink( $post_id );
-			return $insertedurl;
+
+			if($insertedurl = get_the_permalink( $post_id )){
+				return array('success' => $insertedurl);
+			}else{
+				return array('error' => 'error');
+			}
 		}
 	}
 }
